@@ -54,17 +54,16 @@ func main() {
 			isLocalhost = true
 		}
 	}
+	var config *tls.Config
 	if isLocalhost {
 		conn, err = net.Dial("tcp", serverAddr)
-		if err != nil {
-			panic(err)
-		}
+	} else {
+		config = &tls.Config{InsecureSkipVerify: true}
+		conn, err = tls.Dial("tcp", serverAddr, config)
 	}
-	if !isLocalhost {
-		conn, err = tls.Dial("tcp", serverAddr, nil)
-		if err != nil {
-			panic(err)
-		}
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error connection: %v\n", err)
+		os.Exit(1)
 	}
 
 	key := make([]byte, 16)
