@@ -3,7 +3,12 @@ local M = {}
 function M.setup(opts)
 	opts = opts or {}
 	local function ensure_binary()
-		local plugin_path = vim.api.nvim_get_runtime_file("", false)[1]
+		local paths = vim.api.nvim_get_runtime_file("lua/pulse", false)
+		if #paths == 0 then
+			return nil
+		end
+
+		local plugin_path = vim.fn.fnamemodify(paths[1], ":h:h")
 		local bin_dir = plugin_path .. "/bin"
 		local bin_path = bin_dir .. "/pulse"
 
