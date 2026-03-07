@@ -3,13 +3,15 @@ local M = {}
 function M.setup(opts)
 	opts = opts or {}
 	local function ensure_binary()
-		local paths = vim.api.nvim_get_runtime_file("lua/pulse", false)
-		if #paths == 0 then
+		local info = debug.getinfo(1, "S").source
+		if info:sub(1, 1) ~= "@" then
 			return nil
 		end
+		local current_file = info:sub(2)
 
-		local plugin_path = vim.fn.fnamemodify(paths[1], ":h:h")
-		local bin_dir = plugin_path .. "/bin"
+		local plugin_root = vim.fn.fnamemodify(current_file, ":p:h:h:h")
+
+		local bin_dir = plugin_root .. "/bin"
 		local bin_path = bin_dir .. "/pulse"
 
 		if vim.fn.executable(bin_path) == 1 then
@@ -36,13 +38,19 @@ function M.setup(opts)
 
 		return bin_path
 	end
+	local bin = ensure_binary()
+
+	if not bin or vim.fn.executable(bin) == 0 then
+		vim.notify("Pulse: Binario no encontrado o error en descarga", vim.log.levels.ERROR)
+		return
+	end
 
 	local server_url = opts.server_url or ""
 	local idle_time = opts.idle_time or 30000
 	local validate = opts.validate or ""
 	local isLocalhost = opts.isLocalhost or false
 
-	local cmd = { ensure_binary(), server_url, validate, isLocalhost }
+	local cmd = { bin, server_url, validate, isLocalhost }
 	local path = vim.fn.getcwd()
 	local workspace = vim.fn.fnamemodify(path, ":t")
 	local currentStatus = ""
