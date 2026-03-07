@@ -69,9 +69,10 @@ func main() {
 	key := make([]byte, 16)
 	rand.Reader.Read(key)
 	strKey := base64.StdEncoding.EncodeToString(key)
+	path := fmt.Sprintf("/ws?token=%s", validateToken)
 	fmt.Fprintf(conn,
 		"GET %s HTTP/1.1\r\nHost: %s\r\nUpgrade: %s\r\nConnection: %s\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Version: 13\r\nValidate: %s\r\n\r\n",
-		"/ws",
+		path,
 		serverAddr,
 		"websocket",
 		"Upgrade",
