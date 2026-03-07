@@ -77,7 +77,7 @@ func main() {
 	fmt.Fprintf(conn,
 		"GET %s HTTP/1.1\r\nHost: %s\r\nUpgrade: %s\r\nConnection: %s\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Version: 13\r\nValidate: %s\r\n\r\n",
 		path,
-		serverAddr,
+		hostOnly,
 		"websocket",
 		"Upgrade",
 		strKey,
