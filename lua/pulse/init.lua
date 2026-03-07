@@ -20,17 +20,14 @@ function M.setup(opts)
 		local os = uname.sysname:lower()
 		local arch = uname.machine
 
-		if arch == "x86_64" then
-			arch = "amd64"
-		end
-		if arch == "aarch64" then
-			arch = "arm64"
-		end
+		local arch_map = { x86_64 = "amd64", aarch64 = "arm64" }
+		arch = arch_map[arch] or arch
 
 		local binary_name = string.format("pulse_%s_%s", os, arch)
-		local url = string.format("https://github.com/DumbNoxx/puslse.nvim/releases/download/latest/%s", binary_name)
+		local url =
+			string.format("https://github.com/DumbNoxx/pulse.nvim/releases/download/latest/%s.tar.gz", binary_name)
 
-		local download_cmd = string.format("curl -L %s | tar -xz -C %s", url, bin_path)
+		local download_cmd = string.format("curl -sL %s | tar -xz -C %s", url, bin_dir)
 		vim.fn.system(download_cmd)
 
 		if os ~= "windows_nt" then
