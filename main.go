@@ -2,39 +2,20 @@ package main
 
 import (
 	"bufio"
-	"crypto/rand"
 	"crypto/tls"
-	"encoding/base64"
 	"fmt"
-	"net"
 	"os"
-	"strings"
+
+	"github.com/DumbNoxx/pulse.nvim/internal"
 )
-
-func PrepareData(json []byte) (data []byte) {
-	data = append(data, 0x81)
-	if len(json) < 126 {
-		data = append(data, 0x80+byte(len(json)))
-	}
-
-	key := make([]byte, 4)
-	rand.Reader.Read(key)
-	data = append(data, key...)
-
-	for i := range json {
-		data = append(data, byte(json[i]^key[i%4]))
-	}
-
-	return
-}
 
 func main() {
 	var (
-		conn          net.Conn
 		err           error
 		serverAddr    string
 		validateToken string
 		isLocalhost   bool
+		config        *tls.Config
 	)
 
 	if len(os.Args) > 1 {
@@ -54,48 +35,21 @@ func main() {
 			isLocalhost = true
 		}
 	}
-	hostOnly := serverAddr
-	if strings.Contains(serverAddr, ":") {
-		hostOnly, _, _ = net.SplitHostPort(serverAddr)
-	}
-	var config *tls.Config
-	if isLocalhost {
-		conn, err = net.Dial("tcp", serverAddr)
-	} else {
-		config = &tls.Config{ServerName: hostOnly, InsecureSkipVerify: isLocalhost}
-		conn, err = tls.Dial("tcp", serverAddr, config)
-	}
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error connection: %v\n", err)
-		os.Exit(1)
-	}
+	conn := internal.HandleWs(serverAddr, err, validateToken, isLocalhost, config)
+	defer conn.Close()
 
-	key := make([]byte, 16)
-	rand.Reader.Read(key)
-	strKey := base64.StdEncoding.EncodeToString(key)
-	path := fmt.Sprintf("/ws?token=%s", validateToken)
-	fmt.Fprintf(conn,
-		"GET %s HTTP/1.1\r\nHost: %s\r\nUpgrade: %s\r\nConnection: %s\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Version: 13\r\nValidate: %s\r\n\r\n",
-		path,
-		hostOnly,
-		"websocket",
-		"Upgrade",
-		strKey,
-		validateToken,
-	)
-	res := bufio.NewReader(conn)
-	line, err := res.ReadString('\n')
-	if err != nil {
-		panic(err)
-	}
-	if strings.TrimSpace(line) != "HTTP/1.1 101 Switching Protocols" {
-		fmt.Println("error headers")
-		panic("Error headers")
-	}
-	fmt.Println("Connect to Websocket")
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		line := scanner.Text()
-		fmt.Fprintf(conn, "%s", PrepareData([]byte(line)))
+		line := scanner.Bytes()
+		if len(line) == 0 {
+			continue
+		}
+
+		frame := internal.PrepareData(line)
+		_, err := conn.Write(frame)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Write error: %v\n", err)
+			os.Exit(1)
+		}
 	}
 }
