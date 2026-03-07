@@ -18,6 +18,6 @@ archives:
 
 nfpms:
   - maintainer: Dylan Marcano (Nxus) <nxusdev@protonmail.com>
-    description: A Neovim plugin to broadcast your coding status to a WebSocket server.
+    description: Broadcasting your coding status from Neovim to a WebSocket server.
     homepage: https://github.com/DumbNoxx/pulse.nvim
     license: MIT
