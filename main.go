@@ -54,11 +54,15 @@ func main() {
 			isLocalhost = true
 		}
 	}
+	hostOnly := serverAddr
+	if strings.Contains(serverAddr, ":") {
+		hostOnly, _, _ = net.SplitHostPort(serverAddr)
+	}
 	var config *tls.Config
 	if isLocalhost {
 		conn, err = net.Dial("tcp", serverAddr)
 	} else {
-		config = &tls.Config{InsecureSkipVerify: true}
+		config = &tls.Config{ServerName: hostOnly, InsecureSkipVerify: isLocalhost}
 		conn, err = tls.Dial("tcp", serverAddr, config)
 	}
 	if err != nil {
