@@ -31,6 +31,10 @@ function M.setup(opts)
 
 		local download_cmd = string.format("curl -sL --fail %s | tar -xzf - -C %s", url, bin_dir)
 		vim.fn.system(download_cmd)
+		local extracted_bin = bin_dir .. "/" .. binary_name
+		if vim.fn.filereadable(extracted_bin) == 1 then
+			vim.fn.rename(extracted_bin, bin_path)
+		end
 
 		if os ~= "windows_nt" then
 			vim.fn.system("chmod +x " .. bin_path)
