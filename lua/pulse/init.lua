@@ -33,7 +33,7 @@ function M.setup(opts)
 		local output = vim.fn.system({ "sh", "-c", download_cmd })
 
 		if vim.v.shell_error ~= 0 then
-			vim.notify("Error de descarga: " .. output, vim.log.levels.ERROR)
+			vim.notify("Download error: " .. output, vim.log.levels.ERROR)
 			return nil
 		end
 		if os ~= "windows_nt" then
@@ -45,7 +45,7 @@ function M.setup(opts)
 	local bin = ensure_binary()
 
 	if not bin or vim.fn.executable(bin) == 0 then
-		vim.notify("Pulse: Binario no encontrado o error en descarga", vim.log.levels.ERROR)
+		vim.notify("Pulse: Binary not found or download failed", vim.log.levels.ERROR)
 		return
 	end
 
@@ -70,14 +70,14 @@ function M.setup(opts)
 	local test = vim.fn.jobstart(cmd, {
 		on_stderr = function(_, d, _)
 			if d[1] ~= "" then
-				vim.notify("Error : " .. d[1], vim.log.levels.ERROR)
+				vim.notify("Error: " .. d[1], vim.log.levels.ERROR)
 			end
 		end,
 		on_stdout = function(_, d, _)
 			vim.notify(d[1], vim.log.levels.INFO)
 		end,
 		on_exit = function(_, c, _)
-			vim.notify("Proccess close for code: " .. c, vim.log.levels.WARN)
+			vim.notify("Process closed with code: " .. c, vim.log.levels.WARN)
 		end,
 	})
 
@@ -143,21 +143,21 @@ function M.setup(opts)
 		end)
 	)
 
-	vim.keymap.set("n", "<leader>Ci", function()
+	vim.keymap.set("n", "<leader>Cy", function()
 		vim.fn.chansend(test, '{ "status": "idle", "file": ""}\n')
 		currentStatus = "idle"
-	end, { desc = "Poner tu estado idle" })
+	end, { desc = "󰒲 Set status to idle" })
 
 	vim.keymap.set("n", "<leader>Cb", function()
 		vim.fn.chansend(test, '{ "status": "busy", "file": ""}\n')
 		currentStatus = "busy"
-	end, { desc = "Poner tu estado en ocupado" })
+	end, { desc = "󰗖 Set status to busy" })
 
 	vim.keymap.set("n", "<leader>Co", function()
 		vim.fn.chansend(test, string.format('{ "status": "online", "file": "%s"}\n', workspace))
 		currentStatus = "online"
 	end, {
-		desc = "Poner tu estado online",
+		desc = "󰄬 Set status to online",
 	})
 end
 
