@@ -23,7 +23,7 @@ function M.setup(opts)
 		local arch_map = { x86_64 = "amd64", aarch64 = "arm64" }
 		arch = arch_map[arch] or arch
 
-		local binary_name = string.format("pulse_%s_%s", os, arch)
+		local binary_name = string.format("pulse.nvim_%s_%s", os, arch)
 		local url =
 			string.format("https://github.com/DumbNoxx/pulse.nvim/releases/download/latest/%s.tar.gz", binary_name)
 
