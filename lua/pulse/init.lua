@@ -70,7 +70,7 @@ function M.setup(opts)
 	local test = vim.fn.jobstart(cmd, {
 		on_stderr = function(_, d, _)
 			if d[1] ~= "" then
-				vim.notify("Error: " .. d[1], vim.log.levels.ERROR)
+				vim.notify("Error:" .. d[1], vim.log.levels.ERROR)
 			end
 		end,
 		on_stdout = function(_, d, _)
