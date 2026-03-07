@@ -30,12 +30,12 @@ function M.setup(opts)
 			string.format("https://github.com/DumbNoxx/pulse.nvim/releases/download/latest/%s.tar.gz", binary_name)
 
 		local download_cmd = string.format("curl -sL --fail %s | tar -xzf - -C %s", url, bin_dir)
-		vim.fn.system(download_cmd)
-		local extracted_bin = bin_dir .. "/" .. binary_name
-		if vim.fn.filereadable(extracted_bin) == 1 then
-			vim.fn.rename(extracted_bin, bin_path)
-		end
+		local output = vim.fn.system({ "sh", "-c", download_cmd })
 
+		if vim.v.shell_error ~= 0 then
+			vim.notify("Error de descarga: " .. output, vim.log.levels.ERROR)
+			return nil
+		end
 		if os ~= "windows_nt" then
 			vim.fn.system("chmod +x " .. bin_path)
 		end
