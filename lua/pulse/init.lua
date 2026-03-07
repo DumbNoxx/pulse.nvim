@@ -27,7 +27,7 @@ function M.setup(opts)
 		local url =
 			string.format("https://github.com/DumbNoxx/pulse.nvim/releases/download/latest/%s.tar.gz", binary_name)
 
-		local download_cmd = string.format("curl -sL %s | tar -xz -C %s", url, bin_dir)
+		local download_cmd = string.format("curl -sL --fail %s | tar -xzf - -C %s", url, bin_dir)
 		vim.fn.system(download_cmd)
 
 		if os ~= "windows_nt" then
