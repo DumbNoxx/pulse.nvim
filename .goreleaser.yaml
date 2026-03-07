@@ -1,0 +1,23 @@
+version: 2
+builds:
+  - main: .
+    binary: pulse
+    env: [CGO_ENABLED=0]
+    goos:
+      - linux
+      - darwin
+    goarch: 
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+
+archives:
+  - name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+
+
+nfpms:
+  - maintainer: Dylan Marcano (Nxus) <nxusdev@protonmail.com>
+    description: A Neovim plugin to broadcast your coding status to a WebSocket server.
+    homepage: https://github.com/DumbNoxx/pulse.nvim
+    license: MIT

@@ -1,0 +1,43 @@
+# --- Lua ---
+# -- Lua / LuaJIT
+*.luac
+*.o
+*.so
+*.a
+*.dll
+
+# --- LuaRock ---
+rocks/
+*.rock
+
+# --- Environments & Dependencies ---
+# Dependencies folder
+deps/
+vendor/
+
+# --- Temp --- 
+*.log
+*.tmp
+temp/
+
+# -- Golang ---
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Deps
+vendor/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Editors ---
+.idea/
+.vscode/
+*.swp
+*.swo
