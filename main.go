@@ -5,9 +5,30 @@ import (
 	"crypto/tls"
 	"fmt"
 	"os"
+	"regexp"
+	"time"
 
 	"github.com/DumbNoxx/pulse.nvim/internal"
 )
+
+var (
+	re = regexp.MustCompile(`:\d{1,4}`)
+)
+
+func handleIdleTimeout(key string, url string) {
+	ticker := time.NewTicker(time.Second * 30)
+	defer ticker.Stop()
+	for range ticker.C {
+		if err := internal.Heartbeat(key, url); err != nil {
+			fmt.Println(err)
+			continue
+		}
+	}
+}
+
+func cleanUrl(url string) string {
+	return re.ReplaceAllString(url, "")
+}
 
 func main() {
 	var (
@@ -39,6 +60,7 @@ func main() {
 	defer conn.Close()
 
 	scanner := bufio.NewScanner(os.Stdin)
+	go handleIdleTimeout(validateToken, fmt.Sprintf("https://%s", cleanUrl(serverAddr)))
 	for scanner.Scan() {
 		line := scanner.Bytes()
 		if len(line) == 0 {

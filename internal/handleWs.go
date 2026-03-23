@@ -9,10 +9,14 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
 )
 
 func HandleWs(serverAddr string, err error, validateToken string, isLocalhost bool, config *tls.Config) (conn net.Conn) {
 	hostOnly := serverAddr
+	ticker := time.NewTicker(time.Second * 30)
+	defer ticker.Stop()
+
 	if strings.Contains(serverAddr, ":") {
 		hostOnly, _, _ = net.SplitHostPort(serverAddr)
 	}
