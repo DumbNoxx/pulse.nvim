@@ -39,13 +39,16 @@ function M.setup(opts)
             vim.notify("Process closed with code: " .. c, vim.log.levels.WARN)
         end,
     })
-
-    if state.pulse_timer then
-        state.pulse_timer:stop()
+    if state.pulse_idle_timer then
+        if not state.pulse_idle_timer:is_closing() then
+            state.pulse_idle_timer:stop()
+            state.pulse_idle_timer:close()
+        end
     end
+    local uv = vim.uv or vim.loop
+state.pulse_idle_timer = uv.new_timer()
+state.pulse_timer = uv.new_timer()
 
-    state.pulse_idle_timer = vim.uv.new_timer()
-    state.pulse_timer = vim.loop.new_timer()
 
     state.pulse_timer:start(
         20000,
