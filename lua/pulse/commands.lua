@@ -40,25 +40,33 @@ function M.setup(workspace, idle_time)
     })
 
     vim.keymap.set("n", "<leader>Cy", function()
-        vim.fn.chansend(state.job_id, '{ "status": "idle", "file": ""}\n')
-        state.currentStatus = "idle"
+        if state.job_id and state.job_id > 0 then
+            vim.fn.chansend(state.job_id, '{ "status": "idle", "file": ""}\n')
+            state.currentStatus = "idle"
+        end
     end, { desc = "󰒲 Set status to idle" })
 
     vim.keymap.set("n", "<leader>Cb", function()
-        vim.fn.chansend(state.job_id, '{ "status": "busy", "file": ""}\n')
-        state.currentStatus = "busy"
+        if state.job_id and state.job_id > 0 then
+            vim.fn.chansend(state.job_id, '{ "status": "busy", "file": ""}\n')
+            state.currentStatus = "busy"
+        end
     end, { desc = "󰗖 Set status to busy" })
 
     vim.keymap.set("n", "<leader>Co", function()
-        vim.fn.chansend(state.job_id, string.format('{ "status": "online", "file": "%s"}\n', workspace))
-        state.currentStatus = "online"
+        if state.job_id and state.job_id > 0 then
+            vim.fn.chansend(state.job_id, string.format('{ "status": "online", "file": "%s"}\n', workspace))
+            state.currentStatus = "online"
+        end
     end, {
         desc = "󰄬 Set status to online",
     })
 
     vim.api.nvim_create_autocmd("VimLeavePre", {
         callback = function()
-            vim.fn.chansend(state.job_id, '{ "status": "offline", "file": ""}\n')
+            if state.job_id and state.job_id > 0 then
+                vim.fn.chansend(state.job_id, '{ "status": "offline", "file": ""}\n')
+            end
         end,
     })
 end

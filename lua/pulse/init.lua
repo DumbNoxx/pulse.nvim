@@ -46,8 +46,8 @@ function M.setup(opts)
         end
     end
     local uv = vim.uv or vim.loop
-state.pulse_idle_timer = uv.new_timer()
-state.pulse_timer = uv.new_timer()
+    state.pulse_idle_timer = uv.new_timer()
+    state.pulse_timer = uv.new_timer()
 
 
     state.pulse_timer:start(
