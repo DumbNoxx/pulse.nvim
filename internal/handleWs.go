@@ -28,7 +28,7 @@ func HandleWs(serverAddr string, err error, validateToken string, isLocalhost bo
 	}
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error connection: %v\n", err)
-		return
+		os.Exit(1)
 	}
 
 	key := make([]byte, 16)
@@ -48,11 +48,11 @@ func HandleWs(serverAddr string, err error, validateToken string, isLocalhost bo
 	statusLine, err := res.ReadString('\n')
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading response: %v\n", err)
-		return
+		os.Exit(1)
 	}
 	if !strings.Contains(statusLine, "HTTP/1.1 101 Switching Protocols") {
 		fmt.Fprintf(os.Stderr, "Server rejected upgrade: %s", statusLine)
-		return 
+		os.Exit(1)
 	}
 
 	for {
