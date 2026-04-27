@@ -5,6 +5,7 @@ local M = {
 	pulse_idle_timer = nil,
 	---@type uv.uv_timer_t|nil
 	pulse_timer = nil,
+    countError = 0,
 }
 
 return M

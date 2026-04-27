@@ -53,9 +53,10 @@ function M.setup(opts)
     state.pulse_timer:start(
         20000,
         20000,
-        vim.schedule_wrap(function()
-            if state.job_id then
+            if state.job_id and pcall(vim.api.nvim_get_chan_info, state.job_id) then
                 vim.fn.chansend(state.job_id, '{ "status": "", "file": ""}\n')
+            else 
+                state.job_id = nil
             end
         end)
     )
