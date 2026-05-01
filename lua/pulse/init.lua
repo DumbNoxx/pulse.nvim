@@ -53,15 +53,15 @@ function M.setup(opts)
     state.pulse_timer:start(
         20000,
         20000,
-        if state.job_id then
-            vim.fn.chansend(state.job_id, '{ "status": "", "file": ""}\n')
-        end
-            -- if state.job_id and state.countError == 0 then
-            --     local success, err = pcall()
-            --     if not success then 
-            --         state.countError = state.countError + 1
-            --     end
-            -- end
+        -- if state.job_id then
+        --     vim.fn.chansend(state.job_id, '{ "status": "", "file": ""}\n')
+        -- end
+            if state.job_id and state.countError == 0 then
+                local success, err = pcall()
+                if not success then 
+                    state.countError = state.countError + 1
+                end
+            end
         end)
     )
 
